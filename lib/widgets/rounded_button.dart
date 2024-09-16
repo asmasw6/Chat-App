@@ -23,7 +23,11 @@ class RoundedButton extends StatelessWidget {
 
       ),
       child: TextButton(
-          onPressed: () {},
+          onPressed: () {
+
+            onPressed();
+
+          },
           child: Text(
             name,
             style:

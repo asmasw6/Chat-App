@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:sukoon/provider/authentication_provider.dart';
+import 'package:sukoon/services/navigation_service.dart';
 import 'package:sukoon/widgets/custom_input_fields.dart';
 import 'package:sukoon/widgets/rounded_button.dart';
 
@@ -15,10 +19,17 @@ class _LoginPageState extends State<LoginPage> {
 
   final _loginFormKey = GlobalKey<FormState>();
 
+  String? email;
+  String? pass;
+  late AuthenticationProvider auth;
+  late NavigationService navigation;
+
   @override
   Widget build(BuildContext context) {
     _deviceHight = MediaQuery.of(context).size.height;
     _deviceWidth = MediaQuery.of(context).size.width;
+    auth = Provider.of<AuthenticationProvider>(context);
+    navigation = GetIt.instance.get<NavigationService>();
 
     return _buildUI();
   }
@@ -79,12 +90,20 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CustomInputFields(
-                  onSaved: (value) {},
+                  onSaved: (value) {
+                    setState(() {
+                      email = value;
+                    });
+                  },
                   regEx: r'[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
                   hintText: 'Email',
                   obsecureText: false),
               CustomInputFields(
-                  onSaved: (value) {},
+                  onSaved: (value) {
+                    setState(() {
+                      pass = value;
+                    });
+                  },
                   regEx: r'.{8,}',
                   hintText: 'Password',
                   obsecureText: true),
@@ -98,14 +117,19 @@ class _LoginPageState extends State<LoginPage> {
       height: _deviceHight * 0.065,
       width: _deviceWidth * 0.65,
       name: "Login",
-      onPressed: () {},
+      onPressed: () {
+        if (_loginFormKey.currentState!.validate()) {
+          _loginFormKey.currentState!.save();
+          auth.loginUsingEmailAndPass(email!, pass!);
+        }
+      },
     );
   }
 
   Widget _registerAccountLink() {
     return GestureDetector(
-  
       onTap: () {
+        navigation.navigateToRoute("/register");
       },
       child: Container(
         child: const Text(

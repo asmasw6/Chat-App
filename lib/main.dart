@@ -1,11 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sukoon/pages/home_page.dart';
 import 'package:sukoon/pages/login_page.dart';
+import 'package:sukoon/pages/register_page.dart';
 import 'package:sukoon/pages/splash_page.dart';
 import 'package:sukoon/provider/authentication_provider.dart';
 import 'package:sukoon/services/navigation_service.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(false);
+
   runApp(SplashPage(
     onInitializationComplete: () {
       runApp(
@@ -40,6 +49,8 @@ class MainApp extends StatelessWidget {
         initialRoute: '/login',
         routes: {
           '/login': (context) => const LoginPage(),
+          '/home': (context) => const HomePage(),
+          '/register': (context) => const RegisterPage(),
         },
       ),
     );
