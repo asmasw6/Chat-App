@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sukoon/models/chat_message.dart';
 
 const String User_Collection = "Users";
 
@@ -32,6 +33,35 @@ class DatabaseService {
         .get();
   }
 
+  Stream<QuerySnapshot> stramMessagesForChat(String chatID) {
+    return _db
+        .collection(Chat_Collection)
+        .doc(chatID)
+        .collection(Messages_Collection)
+        .orderBy("sent_time", descending: false)
+        .snapshots();
+  }
+
+  Future<void> addMessageToChat(String chatID, ChatMessage message) async {
+    try {
+      await _db
+          .collection(Chat_Collection)
+          .doc(chatID)
+          .collection(Messages_Collection)
+          .add(message.toJson());
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> updateChatData(String chatID, Map<String, dynamic> _data) async {
+    try {
+      await _db.collection(Chat_Collection).doc(chatID).update(_data);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<void> upDateUserLastSeenTime(String uid) async {
     try {
       await _db
@@ -52,6 +82,14 @@ class DatabaseService {
         "last_active": DateTime.now().toUtc(),
         "image": imageURL,
       });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> deleteChat(String chatID) async {
+    try {
+      await _db.collection(Chat_Collection).doc(chatID).delete();
     } catch (e) {
       print(e);
     }

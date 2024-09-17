@@ -1,31 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:sukoon/models/chat.dart';
 import 'package:sukoon/models/chat_message.dart';
 import 'package:sukoon/models/chat_user.dart';
+import 'package:sukoon/pages/chat_page.dart';
 import 'package:sukoon/provider/authentication_provider.dart';
 import 'package:sukoon/provider/chats_page_provider.dart';
+import 'package:sukoon/services/navigation_service.dart';
 import 'package:sukoon/widgets/custom_list_view_tiles.dart';
 import 'package:sukoon/widgets/top_bar.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+class ChatsPage extends StatefulWidget {
+  const ChatsPage({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatsPage> createState() => _ChatsPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatsPageState extends State<ChatsPage> {
   late double _deviceHight;
   late double _deviceWidth;
   late AuthenticationProvider auth;
   late ChatsPageProvider pageProvider;
+  late NavigationService navigation;
 
   @override
   Widget build(BuildContext context) {
     _deviceHight = MediaQuery.of(context).size.height;
     _deviceWidth = MediaQuery.of(context).size.width;
     auth = Provider.of<AuthenticationProvider>(context);
+    navigation = GetIt.instance.get<NavigationService>();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ChatsPageProvider>(
@@ -129,7 +134,11 @@ class _ChatPageState extends State<ChatPage> {
       //"https://i.pravatar.cc/300"
       isActive: isActive,
       isActivity: chatItem.activity,
-      onTap: () {},
+      onTap: () {
+        navigation.navigateToPage(ChatPage(
+          chat: chatItem,
+        ));
+      },
     );
   }
 }

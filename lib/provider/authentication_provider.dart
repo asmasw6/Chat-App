@@ -28,7 +28,7 @@ class AuthenticationProvider extends ChangeNotifier {
                   snapshot.data() as Map<String, dynamic>;
 
               // Assign data to the current user object
-              ChatUser currentUser = ChatUser.fromJSON({
+               User = ChatUser.fromJSON({
                 'uid': user.uid,
                 'name': userData['name'],
                 'email': userData['email'],
@@ -36,7 +36,7 @@ class AuthenticationProvider extends ChangeNotifier {
                 'image': userData['image'],
               });
 
-              print("User>>> ${currentUser}");
+              print("User>>> ${User}");
               // Navigate to home page after setting the user
               navigateServices.removeAndNavigateToRoute('/home');
             } else {
