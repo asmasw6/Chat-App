@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sukoon/pages/chat_page.dart';
+import 'package:sukoon/pages/chats_page.dart';
 import 'package:sukoon/pages/users_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,8 +41,9 @@ class _HomePageState extends State<HomePage> {
             label: "Users",
           ),
         ],
-        
-        selectedItemColor: Color.fromRGBO(13, 65, 154, 1), // Color of the selected item
+
+        selectedItemColor:
+            Color.fromRGBO(13, 65, 154, 1), // Color of the selected item
         unselectedItemColor: Colors.grey, // Color of the unselected items
       ),
     );
