@@ -1,9 +1,13 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sukoon/models/chat.dart';
 import 'package:sukoon/models/chat_message.dart';
 import 'package:sukoon/provider/authentication_provider.dart';
 import 'package:sukoon/provider/chat_page_provider.dart';
+import 'package:sukoon/services/media_service.dart';
 import 'package:sukoon/widgets/custom_input_fields.dart';
 import 'package:sukoon/widgets/custom_list_view_tiles.dart';
 import 'package:sukoon/widgets/top_bar.dart';
@@ -25,6 +29,10 @@ class _ChatPageState extends State<ChatPage> {
   late ChatPageProvider pageProvider;
   late GlobalKey<FormState> messageFormState;
   late ScrollController messagesListViewController;
+
+  // ??
+  PlatformFile? profileImage;
+
 
   @override
   void initState() {
@@ -215,8 +223,15 @@ class _ChatPageState extends State<ChatPage> {
             Icons.camera_enhance,
             color: Colors.white,
           ),
-          onPressed: () {
-            pageProvider.sendImageMessage();
+          onPressed: () async {
+            //----------------------------------------------
+            var status = await Permission.storage.request();
+
+            if (status.isGranted) {
+              // Pick image from library
+              
+              pageProvider.sendImageMessage();
+            }
           },
           backgroundColor: Color.fromRGBO(0, 82, 218, 1),
         ));

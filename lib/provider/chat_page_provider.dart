@@ -112,9 +112,11 @@ class ChatPageProvider extends ChangeNotifier {
   void sendImageMessage() async {
     try {
       PlatformFile? file = await media.pickImageFromLibrary();
+      print(">>>>>>>>>>. file is >>>${file}");
       if (file != null) {
         String? downloadURL =
             await storage.saveChatImageToStorage(chatId, auth.User.uid, file);
+        print(" -----downloadURL-----> ${downloadURL}");
         ChatMessage imageToSend = ChatMessage(
           content: downloadURL!,
           senderID: auth.User.uid,

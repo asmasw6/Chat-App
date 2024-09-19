@@ -119,3 +119,59 @@ class CustomeChatListViewTile extends StatelessWidget {
     );
   }
 }
+
+class CustomListViewTiles extends StatelessWidget {
+  final double height;
+  final String title;
+  final String subTitle;
+  final String imagePath;
+  final bool isActive;
+  final bool isSlected;
+  final Function onTap;
+
+  CustomListViewTiles({
+    required this.height,
+    required this.title,
+    required this.subTitle,
+    required this.imagePath,
+    required this.isActive,
+    required this.isSlected,
+    required this.onTap,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      trailing: isSlected
+          ? const Icon(
+              Icons.check,
+              color: Colors.white,
+            )
+          : null,
+      onTap: () => onTap(),
+      minVerticalPadding: height * 0.20,
+      leading: RoundedImagesNetWithStatusIndicator(
+        imagePath: imagePath,
+        size: height / 2,
+        isActive: isActive,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(
+        subTitle,
+        style: const TextStyle(
+          color: Colors.white54,
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+}

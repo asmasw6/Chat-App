@@ -30,7 +30,7 @@ class TextMessageBubble extends StatelessWidget {
 
     return Container(
       height: height + (message.content.length / 20 * 6.0),
-      width: width * .9,
+      width: width ,
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
       ),

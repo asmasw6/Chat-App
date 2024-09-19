@@ -16,20 +16,6 @@ class CloudStorageService {
       print("No file provided");
       return null; // Handle the null case for the file
     }
-/*
-    try {
-      // Define the storage reference path
-      Reference ref =
-          _storage.ref().child('images/users/$uid/profile.${file.extension}');
-
-      // Upload the file
-      UploadTask task = ref.putFile(File(file.path!));
-
-      // Await and return the download URL after the upload is complete
-      return await task.then((result) async {
-        return await result.ref.getDownloadURL();
-      });
-      */
     try {
       Reference ref = _storage
           .ref()
@@ -44,6 +30,22 @@ class CloudStorageService {
           return await result.ref.getDownloadURL();
         },
       );
+
+
+      /*
+    try {
+      // Define the storage reference path
+      Reference ref =
+          _storage.ref().child('images/users/$uid/profile.${file.extension}');
+
+      // Upload the file
+      UploadTask task = ref.putFile(File(file.path!));
+
+      // Await and return the download URL after the upload is complete
+      return await task.then((result) async {
+        return await result.ref.getDownloadURL();
+      });
+      */
     } catch (e) {
       print(e);
     }
