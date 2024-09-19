@@ -20,7 +20,6 @@ class ChatsPageProvider extends ChangeNotifier {
     getChats();
   }
 
-
   @override
   void dispose() {
     // TODO: implement
@@ -41,7 +40,7 @@ class ChatsPageProvider extends ChangeNotifier {
               for (var uid in chatData["members"]) {
                 DocumentSnapshot userSnapshot = await db.getUser(uid);
                 Map<String, dynamic> userData =
-                    userSnapshot.data() as Map<String, dynamic>;
+                    userSnapshot.data()! as Map<String, dynamic>;
                 userData['uid'] = userSnapshot.id;
                 _members.add(
                   ChatUser.fromJSON(userData),
@@ -51,14 +50,13 @@ class ChatsPageProvider extends ChangeNotifier {
               List<ChatMessage> _messages = [];
               QuerySnapshot chatMessage =
                   await db.getLastMessageForChat(doc.id);
+              //print("before chatMessage.docs.isNotEmpty");
               if (chatMessage.docs.isNotEmpty) {
                 Map<String, dynamic> messageData =
                     chatMessage.docs.first.data()! as Map<String, dynamic>;
-
                 ChatMessage _message = ChatMessage.fromJson(messageData);
                 _messages.add(_message);
               }
-
               //Return Chat Instance
               return Chat(
                 uid: doc.id,

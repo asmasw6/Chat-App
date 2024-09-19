@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:sukoon/models/chat_message.dart';
+import 'package:sukoon/models/chat_user.dart';
+import 'package:sukoon/widgets/message.bubbles.dart';
 import 'package:sukoon/widgets/rounded_image.dart';
 
 class CustomListViewTilesWithActivity extends StatelessWidget {
@@ -60,6 +63,59 @@ class CustomListViewTilesWithActivity extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
+    );
+  }
+}
+
+class CustomeChatListViewTile extends StatelessWidget {
+  final double width;
+  final double height;
+  final bool isOwnMessage;
+  final ChatMessage message;
+  final ChatUser sender;
+  const CustomeChatListViewTile({
+    required this.height,
+    required this.width,
+    required this.isOwnMessage,
+    required this.message,
+    required this.sender,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 10),
+      width: width,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment:
+            isOwnMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          !isOwnMessage
+              ? RoundedImage(
+                  imagePath: sender.imageURL,
+                  size: width * .12,
+                )
+              : Container(),
+          SizedBox(
+            width: width * .05,
+          ),
+          message.type == MessageType.TEXT
+              ? TextMessageBubble(
+                  height: height * 0.06,
+                  width: width,
+                  isOwnMessage: isOwnMessage,
+                  message: message)
+              : ImageMessageBubbles(
+                  height: height * .30,
+                  width: width * .55,
+                  isOwnMessage: isOwnMessage,
+                  message: message,
+                )
+        ],
+      ),
     );
   }
 }

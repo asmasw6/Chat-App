@@ -59,13 +59,18 @@ class CloudStorageService {
         File(file.path!),
       );
 
-      return await task.then(
-        (result) => result.ref.getDownloadURL(),
-        /*
+      // return await task.then((result) => result.ref.getDownloadURL(),
+      /*
         (result) {
           result.ref.getDownloadURL();
         },
         */
+      //);
+
+      return await task.then(
+        (result) async {
+          return await result.ref.getDownloadURL();
+        },
       );
     } catch (e) {
       print(e);

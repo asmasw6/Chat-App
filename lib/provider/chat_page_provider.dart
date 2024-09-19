@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sukoon/models/chat_message.dart';
 import 'package:sukoon/provider/authentication_provider.dart';
@@ -22,6 +23,8 @@ class ChatPageProvider extends ChangeNotifier {
   String chatId;
   List<ChatMessage>? messages;
   late StreamSubscription messagesStream;
+  late StreamSubscription keyboardVisibilityStream;
+  late KeyboardVisibilityController keyboardVisibilityController;
 
   String? message;
 
@@ -29,12 +32,18 @@ class ChatPageProvider extends ChangeNotifier {
     return message!;
   }
 
+  void set setMessage(String value) {
+    message = value;
+  }
+
   ChatPageProvider(this.chatId, this.auth, this.messagesListViewController) {
     db = GetIt.instance.get<DatabaseService>();
     storage = GetIt.instance.get<CloudStorageService>();
     navigation = GetIt.instance.get<NavigationService>();
     media = GetIt.instance.get<MediaService>();
+    keyboardVisibilityController = KeyboardVisibilityController();
     listenToMessages();
+    listenToKeyboardChanges();
   }
 
   @override
@@ -58,13 +67,29 @@ class ChatPageProvider extends ChangeNotifier {
           ).toList();
           messages = messagesToList;
           notifyListeners();
-          //Add Scroll To Bottom Call //
+          //Add Scroll To Bottom Call //'
+          WidgetsBinding.instance!.addPostFrameCallback(
+            (_) {
+              if (messagesListViewController.hasClients) {
+                messagesListViewController.jumpTo(
+                    messagesListViewController.position.maxScrollExtent);
+              }
+            },
+          );
         },
       );
     } catch (e) {
       print('Error getting messages');
       print(e);
     }
+  }
+
+  void listenToKeyboardChanges() {
+    keyboardVisibilityStream = keyboardVisibilityController.onChange.listen(
+      (event) {
+        db.updateChatData(chatId, {"is_activity": event});
+      },
+    );
   }
 
   void deleteChat() {

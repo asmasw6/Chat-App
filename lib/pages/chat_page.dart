@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:sukoon/models/chat.dart';
+import 'package:sukoon/models/chat_message.dart';
 import 'package:sukoon/provider/authentication_provider.dart';
 import 'package:sukoon/provider/chat_page_provider.dart';
-import 'package:sukoon/services/navigation_service.dart';
+import 'package:sukoon/widgets/custom_input_fields.dart';
+import 'package:sukoon/widgets/custom_list_view_tiles.dart';
 import 'package:sukoon/widgets/top_bar.dart';
 
 class ChatPage extends StatefulWidget {
@@ -22,13 +23,13 @@ class _ChatPageState extends State<ChatPage> {
 
   late AuthenticationProvider auth;
   late ChatPageProvider pageProvider;
-  late GlobalKey<FormState> messgaFormState;
+  late GlobalKey<FormState> messageFormState;
   late ScrollController messagesListViewController;
 
   @override
   void initState() {
     super.initState();
-    messgaFormState = GlobalKey<FormState>();
+    messageFormState = GlobalKey<FormState>();
     messagesListViewController = ScrollController();
   }
 
@@ -74,18 +75,23 @@ class _ChatPageState extends State<ChatPage> {
                     this.widget.chat.title(),
                     fontSize: 13,
                     primaryAction: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        pageProvider.deleteChat();
+                      },
                       icon: Icon(Icons.delete),
                       color: Color.fromRGBO(13, 65, 154, 1),
                     ),
                     secondaryAction: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        pageProvider.goBack();
+                      },
                       icon: Icon(Icons.arrow_back),
                       color: Color.fromRGBO(13, 65, 154, 1),
                     ),
                   ),
-                  // list of messages 
+                  // list of messages
                   messagesListView(),
+                  sendMessageForm(),
                 ],
               ),
             ),
@@ -101,14 +107,24 @@ class _ChatPageState extends State<ChatPage> {
         return Container(
           height: _deviceHight * .74,
           child: ListView.builder(
+            controller: messagesListViewController,
             itemCount: pageProvider.messages!.length,
             itemBuilder: (context, index) {
+              ChatMessage messageData = pageProvider.messages![index];
+              bool isOwnMessage = messageData.senderID == auth.User.uid;
               return Container(
-                child: Text(
-                  pageProvider.messages![index].content,
-                  style: TextStyle(color: Colors.white),
-                ),
-              );
+                  child: CustomeChatListViewTile(
+                height: _deviceHight,
+                width: _deviceWidth * .80,
+                isOwnMessage: isOwnMessage,
+                message: messageData,
+                sender: this
+                    .widget
+                    .chat
+                    .members
+                    .where((element) => element.uid == messageData.senderID)
+                    .first,
+              ));
             },
           ),
         );
@@ -128,5 +144,81 @@ class _ChatPageState extends State<ChatPage> {
         ),
       );
     }
+  }
+
+  Widget sendMessageForm() {
+    return Container(
+      height: _deviceHight * 0.06,
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(30, 29, 37, 1.0),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: EdgeInsets.symmetric(
+          horizontal: _deviceWidth * 0.02, vertical: _deviceHight * 0.01),
+      child: Form(
+        key: messageFormState,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            imageMessageButton(),
+            messageTextField(),
+            sendMessageButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget messageTextField() {
+    return SizedBox(
+      width: _deviceWidth * .65,
+      child: CustomInputFields(
+          onSaved: (p0) {
+            pageProvider.setMessage = p0;
+          },
+          regEx: r"^(?!\s*$).+",
+          hintText: "type a message",
+          obsecureText: false),
+    );
+  }
+
+  Widget sendMessageButton() {
+    double size = _deviceHight * .04;
+    return Container(
+      height: size * 1.2,
+      width: size,
+      child: IconButton(
+        onPressed: () {
+          if (messageFormState.currentState!.validate()) {
+            messageFormState.currentState!.save();
+            pageProvider.sendTextMessage();
+            messageFormState.currentState!.reset();
+          }
+        },
+        icon: const Icon(
+          Icons.send,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget imageMessageButton() {
+    double size = _deviceHight * .04;
+    return Container(
+        height: size,
+        width: size,
+        child: FloatingActionButton(
+          child: Icon(
+            Icons.camera_enhance,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            pageProvider.sendImageMessage();
+          },
+          backgroundColor: Color.fromRGBO(0, 82, 218, 1),
+        ));
   }
 }

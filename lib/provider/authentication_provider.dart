@@ -25,7 +25,7 @@ class AuthenticationProvider extends ChangeNotifier {
           await databaseService.getUser(user.uid).then((snapshot) {
             if (snapshot.exists) {
               Map<String, dynamic> userData =
-                  snapshot.data() as Map<String, dynamic>;
+                  snapshot.data()! as Map<String, dynamic>;
 
               // Assign data to the current user object
                User = ChatUser.fromJSON({
